@@ -5,7 +5,8 @@ pipeline {
         stage('Build jenkins1') {
             steps {
                 script {
-                    build job: 'GitHub jenkins/jenkins1/${env.BRANCH_NAME}'
+                    def encodedBranch = java.net.URLEncoder.encode(env.BRANCH_NAME, "UTF-8")
+                    build job: "GitHub jenkins/jenkins1/${encodedBranch}"
                 }
             }
         }
