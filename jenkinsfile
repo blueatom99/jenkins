@@ -5,7 +5,7 @@ pipeline {
         stage('Build jenkins1') {
             steps {
                 script {
-                    build job: 'github jenkins/job/jenkins1/job/development'
+                    build job: 'test1'
                 }
             }
         }
