@@ -13,7 +13,7 @@ pipeline {
         stage('Build jenkins2') {
             steps {
                 script {
-                    build job: 'github jenkins/job/jenkins2/job/development'
+                    build job: 'GitHub%20jenkins/job/jenkins1/job/development/'
                 }
             }
         }
