@@ -1,35 +1,44 @@
 pipeline {
-    agent any               // or label: 'linux', 'windows', etc.
-
-    options {
-        timeout(time: 60, unit: 'MINUTES')   // optional safety net
-        buildDiscarder(logRotator(numToKeepStr: '20'))
-    }
+    agent any
 
     stages {
-        stage('Trigger Other Jobs') {
+        stage('Trigger jenkins1 and jenkins2') {
             steps {
                 script {
-                    // Option 1: Run them sequentially (default)
-                    echo "Starting Job A"
-                    build job: 'jenkins1', 
-                          wait: true, 
-                          propagate: true,           // fails this pipeline if job-A fails
-                          parameters: [
-                              string(name: 'BRANCH', value: "${env.BRANCH_NAME}"),
-                              string(name: 'BUILD_NUMBER', value: "${env.BUILD_NUMBER}")
-                          ]
+                    // ──────────────────────────────────────────────────────
+                    // Option A – Run them in parallel (recommended – faster)
+                    // ──────────────────────────────────────────────────────
+                    parallel {
+                        stage('Run jenkins1') {
+                            steps {
+                                build job: 'jenkins1',
+                                      wait: true,          // wait for it to finish
+                                      propagate: true      // fail this pipeline if jenkins1 fails
+                            }
+                        }
+                        stage('Run jenkins2') {
+                            steps {
+                                build job: 'jenkins2',
+                                      wait: true,
+                                      propagate: true
+                            }
+                        }
+                    }
 
-                    echo "Starting Job B"
-                    build job: 'jenkins2', 
-                          wait: true, 
-                          propagate: true,
-                          parameters: [
-                              booleanParam(name: 'CLEAN', value: true)
-                          ]
+                    // ──────────────────────────────────────────────────────
+                    // Option B – Run them one after another (uncomment if you prefer)
+                    // ──────────────────────────────────────────────────────
+                    /*
+                    build job: 'jenkins1', wait: true, propagate: true
+                    build job: 'jenkins2', wait: true, propagate: true
+                    */
                 }
             }
         }
     }
+
+    post {
+        success { echo 'Both jenkins1 and jenkins2 completed successfully!' }
+        failure { echo 'At least one of the jobs failed.' }
+    }
 }
-                                     
