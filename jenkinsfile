@@ -19,3 +19,9 @@ pipeline {
         }
     }
 }
+/*
+Codepaths obtained with
+Jenkins.instance.getAllItems().each { item ->
+    println(item.fullName)
+}
+*/
