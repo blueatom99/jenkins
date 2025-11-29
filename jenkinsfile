@@ -27,12 +27,9 @@ pipeline {
                           parameters: [
                               booleanParam(name: 'CLEAN', value: true)
                           ]
-
-                    // Option 2: Run them in parallel (much faster)
-                    // Uncomment the block below and comment the two builds above
-                    /*
-                    parallel {
-                        stage('Job A') {
-                            steps {
-                                build job: 'folder1/job-A',
+                }
+            }
+        }
+    }
+}
                                      
