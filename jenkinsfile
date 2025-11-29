@@ -2,36 +2,51 @@ pipeline {
     agent any
 
     stages {
-        stage('Run jenkins1 then jenkins2') {
+        stage('Orchestrate jenkins1 → jenkins2 (same branch)') {
             steps {
                 script {
-                    // Step 1: Trigger jenkins1 and WAIT for it to finish
-                    echo "Starting jenkins1..."
-                    def run1 = build job: 'jenkins1',
-                                     wait: true,          // wait until it finishes
-                                     propagate: false     // don't fail yet – we check result manually
+                    // These variables come from the orchestrator build itself
+                    def branchName = env.BRANCH_NAME
+                    def gitCommit  = env.GIT_COMMIT
 
-                    // Check if jenkins1 succeeded
-                    if (run1.result != 'SUCCESS') {
-                        error "jenkins1 failed with result: ${run1.result}. Stopping pipeline."
-                    }
-                    echo "jenkins1 completed successfully!"
+                    echo "Orchestrator running on branch: ${branchName}"
+                    echo "Using commit: ${gitCommit}"
 
-                    // Step 2: Only if jenkins1 passed → trigger jenkins2
-                    echo "Starting jenkins2..."
-                    def run2 = build job: 'jenkins2',
+                    // ─────────────────────────────
+                    // 1. Trigger jenkins1 on the SAME branch & commit
+                    // ─────────────────────────────
+                    def run1 = build job: "jenkins1/${branchName}",
                                      wait: true,
-                                     propagate: true      // now we let failure propagate
+                                     propagate: false,
+                                     parameters: [
+                                         // Forces jenkins1 to checkout the exact same commit
+                                         string(name: 'BRANCH_NAME', value: branchName),
+                                         string(name: 'GIT_COMMIT',  value: gitCommit)
+                                     ]
 
-                    echo "jenkins2 finished with result: ${run2.result}"
+                    if (run1.result != 'SUCCESS') {
+                        error "jenkins1 failed on branch ${branchName} (${run1.result})"
+                    }
+                    echo "jenkins1 succeeded!"
+
+                    // ─────────────────────────────
+                    // 2. Trigger jenkins2 on the SAME branch & commit
+                    // ─────────────────────────────
+                    build job: "jenkins2/${branchName}",
+                          wait: true,
+                          propagate: true,
+                          parameters: [
+                              string(name: 'BRANCH_NAME', value: branchName),
+                              string(name: 'GIT_COMMIT',  value: gitCommit)
+                          ]
                 }
             }
         }
     }
 
     post {
-        success { echo "Both jenkins1 and jenkins2 ran successfully!" }
-        failure { echo "Pipeline failed (likely because jenkins1 failed or was aborted)." }
-        always  { echo "End of orchestrator pipeline." }
+        success { echo "All three pipelines (orchestrator + jenkins1 + jenkins2) succeeded on ${env.BRANCH_NAME}!" }
+        failure { echo "Pipeline failed – check logs above." }
+        always  { cleanWs() }
     }
 }
