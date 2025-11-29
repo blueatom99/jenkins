@@ -6,32 +6,12 @@ pipeline {
             steps {
                 script {
                     // ──────────────────────────────────────────────────────
-                    // Option A – Run them in parallel (recommended – faster)
-                    // ──────────────────────────────────────────────────────
-                    parallel {
-                        stage('Run jenkins1') {
-                            steps {
-                                build job: 'jenkins1',
-                                      wait: true,          // wait for it to finish
-                                      propagate: true      // fail this pipeline if jenkins1 fails
-                            }
-                        }
-                        stage('Run jenkins2') {
-                            steps {
-                                build job: 'jenkins2',
-                                      wait: true,
-                                      propagate: true
-                            }
-                        }
-                    }
-
-                    // ──────────────────────────────────────────────────────
                     // Option B – Run them one after another (uncomment if you prefer)
                     // ──────────────────────────────────────────────────────
-                    /*
+                    
                     build job: 'jenkins1', wait: true, propagate: true
                     build job: 'jenkins2', wait: true, propagate: true
-                    */
+                    
                 }
             }
         }
