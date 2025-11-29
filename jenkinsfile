@@ -2,51 +2,22 @@ pipeline {
     agent any
 
     stages {
-        stage('Orchestrate jenkins1 → jenkins2 (same branch)') {
+        stage('Build jenkins1') {
             steps {
                 script {
-                    // These variables come from the orchestrator build itself
-                    def branchName = env.BRANCH_NAME
-                    def gitCommit  = env.GIT_COMMIT
-
-                    echo "Orchestrator running on branch: ${branchName}"
-                    echo "Using commit: ${gitCommit}"
-
-                    // ─────────────────────────────
-                    // 1. Trigger jenkins1 on the SAME branch & commit
-                    // ─────────────────────────────
-                    def run1 = build job: "jenkins1/${branchName}",
-                                     wait: true,
-                                     propagate: false,
-                                     parameters: [
-                                         // Forces jenkins1 to checkout the exact same commit
-                                         string(name: 'BRANCH_NAME', value: branchName),
-                                         string(name: 'GIT_COMMIT',  value: gitCommit)
-                                     ]
-
-                    if (run1.result != 'SUCCESS') {
-                        error "jenkins1 failed on branch ${branchName} (${run1.result})"
-                    }
-                    echo "jenkins1 succeeded!"
-
-                    // ─────────────────────────────
-                    // 2. Trigger jenkins2 on the SAME branch & commit
-                    // ─────────────────────────────
-                    build job: "jenkins2/${branchName}",
-                          wait: true,
-                          propagate: true,
-                          parameters: [
-                              string(name: 'BRANCH_NAME', value: branchName),
-                              string(name: 'GIT_COMMIT',  value: gitCommit)
-                          ]
+                    // Trigger job "jenkins1/master" or specific branch
+                    build job: 'jenkins1/development'
                 }
             }
         }
-    }
 
-    post {
-        success { echo "All three pipelines (orchestrator + jenkins1 + jenkins2) succeeded on ${env.BRANCH_NAME}!" }
-        failure { echo "Pipeline failed – check logs above." }
-        always  { cleanWs() }
+        stage('Build jenkins2') {
+            steps {
+                script {
+                    // Trigger job "jenkins2/master" or specific branch
+                    build job: 'jenkins2/development'
+                }
+            }
+        }
     }
 }
