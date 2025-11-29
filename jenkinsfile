@@ -1,0 +1,38 @@
+pipeline {
+    agent any               // or label: 'linux', 'windows', etc.
+
+    options {
+        timeout(time: 60, unit: 'MINUTES')   // optional safety net
+        buildDiscarder(logRotator(numToKeepStr: '20'))
+    }
+
+    stages {
+        stage('Trigger Other Jobs') {
+            steps {
+                script {
+                    // Option 1: Run them sequentially (default)
+                    echo "Starting Job A"
+                    build job: 'jenkins1', 
+                          wait: true, 
+                          propagate: true,           // fails this pipeline if job-A fails
+                          parameters: [
+                              string(name: 'BRANCH', value: "${env.BRANCH_NAME}"),
+                              string(name: 'BUILD_NUMBER', value: "${env.BUILD_NUMBER}")
+                          ]
+
+                    echo "Starting Job B"
+                    build job: 'jenkins2', 
+                          wait: true, 
+                          propagate: true,
+                          parameters: [
+                              booleanParam(name: 'CLEAN', value: true)
+                          ]
+
+                    // Option 2: Run them in parallel (much faster)
+                    // Uncomment the block below and comment the two builds above
+                    /*
+                    parallel {
+                        stage('Job A') {
+                            steps {
+                                build job: 'folder1/job-A',
+                                     
