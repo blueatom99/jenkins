@@ -6,7 +6,7 @@ pipeline {
             steps {
                 script {
                     // Trigger job "jenkins1/master" or specific branch
-                    build job: ''GitHub jenkins/job/jenkins1/job/development'
+                    build job: 'GitHub jenkins/job/jenkins1/job/development'
                 }
             }
         }
