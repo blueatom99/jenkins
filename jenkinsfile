@@ -7,12 +7,12 @@ pipeline {
 
     stages {
         stage('Get some debug info') {
-        steps {
-            sh 'echo "Building branch: ${BRANCH}"'
-            sh 'env'
-            sh 'build url is ${BUILD_URL}'
+            steps {
+                sh 'echo "Building branch: ${BRANCH}"'
+                sh 'env'
+                sh 'echo "build url is ${BUILD_URL}"'
+            }
         }
-    }
 
         stage('Build jenkins1') {
             steps {
