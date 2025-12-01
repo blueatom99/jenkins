@@ -1,14 +1,18 @@
 pipeline {
     agent any
 
-    choice(name: 'branch', choices: ['developmen', 'main'], description: 'Branch to build')
+    choice(
+        name: 'BRANCH', 
+        choices: ['development', 'main'], 
+        description: 'Branch to build'
+        )
 
     stages {
         stage('Build jenkins1') {
             steps {
                 script {
                     // def encodedBranch = java.net.URLEncoder.encode(env.BRANCH_NAME, "UTF-8")
-                    def encodedBranch = java.net.URLEncoder.encode(params.branch, "UTF-8")
+                    def encodedBranch = java.net.URLEncoder.encode(params.BRANCH, "UTF-8")
                     build job: "GitHub jenkins/jenkins1/${encodedBranch}"
                 }
             }
@@ -18,7 +22,7 @@ pipeline {
             steps {
                 script {
                     //def encodedBranch = java.net.URLEncoder.encode(env.BRANCH_NAME, "UTF-8")
-                    def encodedBranch = java.net.URLEncoder.encode(params.branch, "UTF-8")
+                    def encodedBranch = java.net.URLEncoder.encode(params.BRANCH, "UTF-8")
                     build job: "GitHub jenkins/jenkins2/${encodedBranch}"
                 }
             }
