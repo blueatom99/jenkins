@@ -5,7 +5,8 @@ pipeline {
         choice(name: 'BRANCH', choices: ['development', 'main'], description: 'Branch to build')
     }
 
-    stage('Get some debug info') {
+    stages {
+        stage('Get some debug info') {
         steps {
             sh 'echo "Building branch: ${BRANCH}"'
             sh 'env'
@@ -13,7 +14,6 @@ pipeline {
         }
     }
 
-    stages {
         stage('Build jenkins1') {
             steps {
                 script {
