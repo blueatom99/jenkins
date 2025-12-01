@@ -5,6 +5,14 @@ pipeline {
         choice(name: 'BRANCH', choices: ['development', 'main'], description: 'Branch to build')
     }
 
+    stage('Get some debug info') {
+        steps {
+            sh 'echo "Building branch: ${BRANCH}"'
+            sh 'env'
+            sh 'build url is ${BUILD_URL}'
+        }
+    }
+
     stages {
         stage('Build jenkins1') {
             steps {
@@ -29,6 +37,7 @@ pipeline {
 }
 /*
 Codepaths obtained with
+Jenkins -  Manage Jenkins - Script Console
 Jenkins.instance.getAllItems().each { item ->
     println(item.fullName)
 }
