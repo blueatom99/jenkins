@@ -1,11 +1,9 @@
 pipeline {
     agent any
 
-    choice(
-        name: 'BRANCH', 
-        choices: ['development', 'main'], 
-        description: 'Branch to build'
-        )
+    parameters {
+        choice(name: 'BRANCH', choices: ['development', 'main'], description: 'Branch to build')
+    }
 
     stages {
         stage('Build jenkins1') {
