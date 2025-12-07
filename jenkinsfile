@@ -14,23 +14,6 @@ pipeline {
             }
         }
 
-        /*
-        stage('Get some debug info') {
-            steps {
-            script {
-                try {
-                sh 'echo "Building branch: ${BRANCH}"'
-                sh 'env'
-                sh 'echo "build url is ${BUILD_URL}"'
-                env.SUCCESSFUL_STAGES = 'Get some debug info'
-                } catch (Exception e) {
-                echo "Get some debug info failed: ${e.message}"
-                }
-            }
-            }
-        }
-        */
-
         stage('Build jenkins1') {
             steps {
                 script {
