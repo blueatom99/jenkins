@@ -6,11 +6,26 @@ pipeline {
     }
 
     stages {
+        stage('Initialize') {
+            steps {
+                script {
+                    env.SUCCESSFUL_STAGES = ''
+                }
+            }
+        }
+
         stage('Get some debug info') {
             steps {
-                sh 'echo "Building branch: ${BRANCH}"'
-                sh 'env'
-                sh 'echo "build url is ${BUILD_URL}"'
+                script {
+                    try {
+                        sh 'echo "Building branch: ${BRANCH}"'
+                        sh 'env'
+                        sh 'echo "build url is ${BUILD_URL}"'
+                        env.SUCCESSFUL_STAGES = 'Get some debug info'
+                    } catch (Exception e) {
+                        echo "Get some debug info failed: ${e.message}"
+                    }
+                }
             }
         }
 
@@ -18,9 +33,10 @@ pipeline {
             steps {
                 script {
                     try {
-                    // def encodedBranch = java.net.URLEncoder.encode(env.BRANCH_NAME, "UTF-8")
-                    def encodedBranch = java.net.URLEncoder.encode(params.BRANCH, "UTF-8")
-                    build job: "GitHub jenkins/jenkins1/${encodedBranch}"
+                        // def encodedBranch = java.net.URLEncoder.encode(env.BRANCH_NAME, "UTF-8")
+                        def encodedBranch = java.net.URLEncoder.encode(params.BRANCH, "UTF-8")
+                        build job: "GitHub jenkins/jenkins1/${encodedBranch}"
+                        env.SUCCESSFUL_STAGES += ',Build jenkins1'
                     } catch (Exception e) {
                         echo "Build of jenkins1 failed: ${e.getMessage()}"
                         currentBuild.result = 'UNSTABLE'
@@ -32,9 +48,29 @@ pipeline {
         stage('Build jenkins2') {
             steps {
                 script {
-                    //def encodedBranch = java.net.URLEncoder.encode(env.BRANCH_NAME, "UTF-8")
-                    def encodedBranch = java.net.URLEncoder.encode(params.BRANCH, "UTF-8")
-                    build job: "GitHub jenkins/jenkins2/${encodedBranch}"
+                    try {
+                        //def encodedBranch = java.net.URLEncoder.encode(env.BRANCH_NAME, "UTF-8")
+                        def encodedBranch = java.net.URLEncoder.encode(params.BRANCH, "UTF-8")
+                        build job: "GitHub jenkins/jenkins2/${encodedBranch}"
+                        env.SUCCESSFUL_STAGES += ',Build jenkins2'
+                    } catch (Exception e) {
+                        echo "Build of jenkins2 failed: ${e.message}"
+                        currentBuild.result = 'UNSTABLE'
+                    }
+                }
+            }
+        }
+
+        stage('Summary') {
+            steps {
+                script {
+                    def successfulStages = env.SUCCESSFUL_STAGES.split(',').findAll { it.trim() != '' }
+                    echo "==================== BUILD SUMMARY ===================="
+                    echo "Total successful stages: ${successfulStages.size()}"
+                    successfulStages.each { stage ->
+                        echo "✓ ${stage.trim()}"
+                    }
+                    echo "======================================================"
                 }
             }
         }
