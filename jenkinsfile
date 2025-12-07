@@ -21,7 +21,7 @@ pipeline {
                     // def encodedBranch = java.net.URLEncoder.encode(env.BRANCH_NAME, "UTF-8")
                     def encodedBranch = java.net.URLEncoder.encode(params.BRANCH, "UTF-8")
                     build job: "GitHub jenkins/jenkins1/${encodedBranch}"
-                    } catch (Exception e§) {
+                    } catch (Exception e) {
                         echo "Build of jenkins1 failed: ${e.getMessage()}"
                         currentBuild.result = 'UNSTABLE'
                     }       
