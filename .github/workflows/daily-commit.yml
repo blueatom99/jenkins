@@ -22,4 +22,5 @@ jobs:
       - name: Push changes
         uses: ad-m/github-push-action@v0.6.0
         with:
+          ref: refs/heads/development
           github_token: ${{ secrets.GITHUB_TOKEN }}
