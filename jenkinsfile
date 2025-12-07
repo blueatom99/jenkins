@@ -1,0 +1,49 @@
+pipeline {
+    agent any
+
+    parameters {
+        choice(name: 'BRANCH', choices: ['development', 'main'], description: 'Branch to build')
+    }
+
+    stages {
+        stage('Get some debug info') {
+            steps {
+                sh 'echo "Building branch: ${BRANCH}"'
+                sh 'env'
+                sh 'echo "build url is ${BUILD_URL}"'
+            }
+        }
+
+        stage('Build jenkins1') {
+            steps {
+                script {
+                    try {
+                    // def encodedBranch = java.net.URLEncoder.encode(env.BRANCH_NAME, "UTF-8")
+                    def encodedBranch = java.net.URLEncoder.encode(params.BRANCH, "UTF-8")
+                    build job: "GitHub jenkins/jenkins1/${encodedBranch}"
+                    } catch (Exception e) {
+                        echo "Build of jenkins1 failed: ${e.getMessage()}"
+                        currentBuild.result = 'UNSTABLE'
+                    }       
+                }
+            }
+        }
+
+        stage('Build jenkins2') {
+            steps {
+                script {
+                    //def encodedBranch = java.net.URLEncoder.encode(env.BRANCH_NAME, "UTF-8")
+                    def encodedBranch = java.net.URLEncoder.encode(params.BRANCH, "UTF-8")
+                    build job: "GitHub jenkins/jenkins2/${encodedBranch}"
+                }
+            }
+        }
+    }
+}
+/*
+Codepaths obtained with
+Jenkins -  Manage Jenkins - Script Console
+Jenkins.instance.getAllItems().each { item ->
+    println(item.fullName)
+}
+*/
