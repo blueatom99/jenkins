@@ -1,0 +1,26 @@
+name: Daily Commit 
+
+on:
+  schedule:
+    - cron: "* * * * *"   # Every day at 09:00 UTC
+  workflow_dispatch:       # Allows manual run
+
+jobs:
+  auto-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Make a change
+        run: |
+          date > last-run.txt
+          git config user.name "Auto Commit Bot"
+          git config user.email "bot@example.com"
+          git add last-run.txt
+          git commit -m "Daily update: $(date)"
+          git push
+      - name: Push changes
+        uses: ad-m/github-push-action@v0.6.0
+        with:
+          ref: refs/heads/development
+          github_token: ${{ secrets.GITHUB_TOKEN }}
