@@ -11,8 +11,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: refs/heads/development
-
+          branch: development
       - name: Make a change
         run: |
           date > last-run.txt
@@ -23,5 +22,5 @@ jobs:
       - name: Push changes
         uses: ad-m/github-push-action@v0.6.0
         with:
-          ref: refs/heads/development
+          branch: development
           github_token: ${{ secrets.GITHUB_TOKEN }}
