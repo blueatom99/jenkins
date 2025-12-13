@@ -3,6 +3,9 @@ name: Manual timestamp commit (dev)
 on:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   write-and-commit:
     runs-on: ubuntu-latest
