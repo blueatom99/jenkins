@@ -56,6 +56,26 @@ pipeline {
                         echo "✓ ${stage.trim()}"
                     }
                     echo "======================================================"
+                    
+                    // Check if all stages succeeded
+                    env.ALL_SUCCESSFUL = (currentBuild.result == null || currentBuild.result == 'SUCCESS')
+                }
+            }
+        }
+
+        stage('All Stages Succeeded') {
+            when {
+                expression {
+                    return env.ALL_SUCCESSFUL == 'true'
+                }
+            }
+            steps {
+                script {
+                    echo "✓ All stages completed successfully!"
+                    // Add your action here (e.g., send notification, deploy, etc.)
+                    // Example:
+                    // sh 'echo "Triggering deployment..."'
+                    // build job: 'deploy-job'
                 }
             }
         }
