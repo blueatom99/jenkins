@@ -1,0 +1,32 @@
+name: Manual timestamp commit (dev)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  write-and-commit:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout development branch
+        uses: actions/checkout@v4
+        with:
+          ref: development
+          persist-credentials: true
+
+      - name: Configure git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Write timestamp
+        run: |
+          date -u +"%Y-%m-%dT%H:%M:%SZ" > last-run.txt
+
+      - name: Commit changes
+        run: |
+          git add last-run.txt
+          git commit -m "Update timestamp [manual test]" || echo "No changes to commit"
+
+      - name: Push to development
+        run: git push origin development
