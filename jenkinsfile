@@ -1,9 +1,6 @@
-pipeline {
-    agent any
-    
-    parameters {
-        // Active Choices parameter using the correct $class syntax (requires Active Choices Plugin)
-        // This Groovy script returns the choices; checkbox multi-select is enabled via choiceType 'CHECKBOX'.
+// Define Active Choices parameter as a job property (required for $class-style parameters)
+properties([
+    parameters([
         [$class: 'CascadeChoiceParameter',
             choiceType: 'CHECKBOX',
             description: 'Select one or more options',
@@ -12,14 +9,14 @@ pipeline {
             randomName: 'choice-1',
             referencedParameters: '',
             script: [$class: 'GroovyScript', script: [sandbox: true, script: """
-                // return a list of options
                 return ['option1','option2','option3','option4']
-            """]]
+            """], fallbackScript: [sandbox: true, script: "return ['Error loading options']"]]
         ]
+    ])
+])
 
-        // If you don't have Active Choices plugin, use this fallback string parameter:
-        // string(name: 'MY_CHOICE', defaultValue: 'option1,option2', description: 'Comma-separated list of choices')
-    }
+pipeline {
+    agent any
     
     stages {
         stage('Show Selected Options') {
