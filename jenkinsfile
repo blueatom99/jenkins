@@ -2,9 +2,8 @@
 properties([
     parameters([
         [$class: 'CascadeChoiceParameter',
-            choiceType: 'CHECKBOX',
+            choiceType: 'PT_CHECKBOX',
             description: 'Select one or more options',
-            filterLength: '1',
             name: 'MY_CHOICE',
             randomName: 'choice-1',
             referencedParameters: '',
