@@ -28,7 +28,7 @@ pipeline {
                 script {
                     // params.MY_CHOICE will be a comma-separated string, e.g., "option1,option3"
                     // If nothing selected, it will be null or empty string
-                    def selected = params.MY_CHOICE ?.trim() ? params.MY_CHOICE.split(',')*.trim() : []
+                    def selected = params.MY_CHOICE ?.trim() ? params.MY_CHOICE.split(',').collect { it.trim() }
                     
                     echo "Selected options: ${selected}"
                     selected.each { echo " - ${it}" }
