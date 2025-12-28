@@ -54,8 +54,6 @@ pipeline {
 
 
 
-
-    stages {
         stage('Initialize') {
             steps {
                 script {
