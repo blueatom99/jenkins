@@ -21,36 +21,11 @@ pipeline {
     agent any
     
     parameters {
-        // // Radio-button branch selection (requires Extended Choice Parameter plugin)
-        // extendedChoice(
-        //     name: 'BRANCH',
-        //     type: 'PT_RADIO',
-        //     value: 'development,main',
-        //     description: 'Select branch to build (radio)'
-        // )
-        // Fallback (dropdown) if plugin not installed:
         choice(name: 'Branch', choices: ['development', 'main'], description: 'Branch to build')
     }
     
     stages {
-        // stage('Show Selected Options') {
-        //     steps {
-        //         script {
-        //             def selected = []
-        //             if (params.MY_CHOICE) {
-        //                 selected = params.MY_CHOICE.split(',').collect { it.trim() }.findAll { it }
-        //             }
 
-        //             echo "You selected: ${selected.join(', ') ?: 'nothing'}"
-                    
-        //             if (selected.isEmpty()) {
-        //                 echo "Warning: No options were selected."
-        //             } else {
-        //                 selected.each { echo " → ${it}" }
-        //             }
-        //         }
-        //     }
-        // }
 
         stage('Initialize') {
             steps {
