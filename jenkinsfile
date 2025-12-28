@@ -33,24 +33,24 @@ pipeline {
     }
     
     stages {
-        stage('Show Selected Options') {
-            steps {
-                script {
-                    def selected = []
-                    if (params.MY_CHOICE) {
-                        selected = params.MY_CHOICE.split(',').collect { it.trim() }.findAll { it }
-                    }
+        // stage('Show Selected Options') {
+        //     steps {
+        //         script {
+        //             def selected = []
+        //             if (params.MY_CHOICE) {
+        //                 selected = params.MY_CHOICE.split(',').collect { it.trim() }.findAll { it }
+        //             }
 
-                    echo "You selected: ${selected.join(', ') ?: 'nothing'}"
+        //             echo "You selected: ${selected.join(', ') ?: 'nothing'}"
                     
-                    if (selected.isEmpty()) {
-                        echo "Warning: No options were selected."
-                    } else {
-                        selected.each { echo " → ${it}" }
-                    }
-                }
-            }
-        }
+        //             if (selected.isEmpty()) {
+        //                 echo "Warning: No options were selected."
+        //             } else {
+        //                 selected.each { echo " → ${it}" }
+        //             }
+        //         }
+        //     }
+        // }
 
         stage('Initialize') {
             steps {
