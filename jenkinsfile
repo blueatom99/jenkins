@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     parameters {
-    #    choice(name: 'BRANCH', choices: ['development', 'main'], description: 'Branch to build')
-    # Allow multiple selections for TARGETS
+    //choice(name: 'BRANCH', choices: ['development', 'main'], description: 'Branch to build')
+    // Allow multiple selections for TARGETS
         extendedChoice(
             name: 'TARGETS',
             type: 'PT_CHECKBOX',                // checkbox multi-select
