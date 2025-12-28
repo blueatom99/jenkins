@@ -1,45 +1,54 @@
-pproperties([
-    parameters([
-        [$class: 'ChoiceParameter',
-         choiceType: 'PT_CHECKBOX',                // Checkboxes = multi-select allowed
-         name: 'MY_CHOICE',
-         description: 'Select one or more options',
-         script: [
-             $class: 'GroovyScript',
-             sandbox: true,
-             script: '''
-                 return [
-                     "option1",
-                     "option2",
-                     "option3",
-                     "option4"
-                 ]
-             '''
-         ]
-        ]
-    ])
-])
+
 
 pipeline {
     agent any
+    
+    // Your properties with Active Choices parameter here...
+    
+    properties([
+        parameters([
+            [$class: 'ChoiceParameter',
+            choiceType: 'PT_CHECKBOX',                // Checkboxes = multi-select allowed
+            name: 'MY_CHOICE',
+            description: 'Select one or more options',
+            script: [
+                $class: 'GroovyScript',
+                sandbox: true,
+                script: '''
+                    return [
+                        "option1",
+                        "option2",
+                        "option3",
+                        "option4"
+                    ]
+                '''
+            ]
+            ]
+        ])
+    ])
+
     stages {
         stage('Show Selected Options') {
             steps {
                 script {
-                    // params.MY_CHOICE will be a comma-separated string, e.g., "option1,option3"
-                    // If nothing selected, it will be null or empty string
-                    def selected = params.MY_CHOICE ?.trim() ? params.MY_CHOICE.split(',').collect { it.trim() }
-                    
+                    def selected = []
+                    if (params.MY_CHOICE) {
+                        selected = params.MY_CHOICE.split(',').collect { it.trim() }.findAll { it }
+                    }
+
                     echo "Selected options: ${selected}"
-                    selected.each { echo " - ${it}" }
-                    
+                    selected.each { option ->
+                        echo " - ${option}"
+                    }
+
                     if (selected.isEmpty()) {
                         echo "No options were selected."
                     }
                 }
             }
         }
-    
+    }
+
 
 
     // parameters {
