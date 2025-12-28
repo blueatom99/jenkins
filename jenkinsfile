@@ -2,17 +2,22 @@ pipeline {
     agent any
     
     parameters {
-        // Use Extended Choice (checkbox multi-select). Requires "Extended Choice Parameter" plugin.
-        // If you don't have the plugin, uncomment the string fallback below.
-        extendedChoice(
+        // Active Choices parameter using the correct $class syntax (requires Active Choices Plugin)
+        // This Groovy script returns the choices; checkbox multi-select is enabled via choiceType 'CHECKBOX'.
+        [$class: 'CascadeChoiceParameter',
+            choiceType: 'CHECKBOX',
+            description: 'Select one or more options',
+            filterLength: '1',
             name: 'MY_CHOICE',
-            type: 'PT_CHECKBOX',
-            value: 'option1,option2,option3,option4',
-            multiSelectDelimiter: ',',
-            description: 'Select one or more options'
-        )
+            randomName: 'choice-1',
+            referencedParameters: '',
+            script: [$class: 'GroovyScript', script: [sandbox: true, script: """
+                // return a list of options
+                return ['option1','option2','option3','option4']
+            """]]
+        ]
 
-        // Fallback if plugin not available:
+        // If you don't have Active Choices plugin, use this fallback string parameter:
         // string(name: 'MY_CHOICE', defaultValue: 'option1,option2', description: 'Comma-separated list of choices')
     }
     
