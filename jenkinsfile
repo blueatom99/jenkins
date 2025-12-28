@@ -1,32 +1,25 @@
-
-
 pipeline {
     agent any
     
-    // Your properties with Active Choices parameter here...
-    
-    properties([
-        parameters([
-            [$class: 'ChoiceParameter',
-            choiceType: 'PT_CHECKBOX',                // Checkboxes = multi-select allowed
+    parameters {
+        activeChoice(
             name: 'MY_CHOICE',
             description: 'Select one or more options',
-            script: [
-                $class: 'GroovyScript',
-                sandbox: true,
-                script: '''
-                    return [
-                        "option1",
-                        "option2",
-                        "option3",
-                        "option4"
-                    ]
-                '''
-            ]
-            ]
-        ])
-    ])
-
+            choiceType: 'PT_CHECKBOX',  // PT_CHECKBOX = checkboxes (multi-select), PT_SINGLE_SELECT = dropdown single
+            groovyScript: '''
+                return [
+                    "option1",
+                    "option2",
+                    "option3",
+                    "option4"
+                ]
+            ''',
+            fallbackScript: '''
+                return ["Error loading options"]
+            '''
+        )
+    }
+    
     stages {
         stage('Show Selected Options') {
             steps {
@@ -36,20 +29,17 @@ pipeline {
                         selected = params.MY_CHOICE.split(',').collect { it.trim() }.findAll { it }
                     }
 
-                    echo "Selected options: ${selected}"
-                    selected.each { option ->
-                        echo " - ${option}"
-                    }
-
+                    echo "You selected: ${selected.join(', ') ?: 'nothing'}"
+                    
                     if (selected.isEmpty()) {
-                        echo "No options were selected."
+                        echo "Warning: No options were selected."
+                    } else {
+                        selected.each { echo " → ${it}" }
                     }
                 }
             }
         }
     
-
-
 
     // parameters {
     // //choice(name: 'BRANCH', choices: ['development', 'main'], description: 'Branch to build')
