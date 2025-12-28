@@ -6,12 +6,12 @@ properties([
             description: 'Select one or more options',
             name: 'Builds',
             // Default selected options (comma-separated). Adjust as needed.
-            value: 'jenkins1,jenkins2',
+            value: 'jenkins1,jenkins2,summary',
             // 'randomName' is used as an internal identifier for the parameter; renamed for clarity
             randomName: 'buildsParameterChoice',
             referencedParameters: '',
             script: [$class: 'GroovyScript', script: [sandbox: true, script: """
-                return ['jenkins1','jenkins2']
+                return ['jenkins1','jenkins2','summary']
             """], fallbackScript: [sandbox: true, script: "return ['Error loading options']"]]
         ]
     ])
@@ -81,6 +81,12 @@ pipeline {
         }
 
         stage('Summary') {
+            when {
+                expression {
+                    def raw = params.Builds ?: ''
+                    return raw.tokenize(',').collect { it.trim() }.contains('summary')
+                }
+            }            
             steps {
                 script {
                     def successfulStages = env.SUCCESSFUL_STAGES.split(',').findAll { it.trim() != '' }
