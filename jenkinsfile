@@ -7,7 +7,7 @@ pipeline {
         extendedChoice(
             name: 'TARGETS',
             type: 'PT_CHECKBOX',                // checkbox multi-select
-            value: 'jenkins1,jen
+            value: 'jenkins1,jen'
     }
 
 
