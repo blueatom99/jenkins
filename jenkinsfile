@@ -2,22 +2,18 @@ pipeline {
     agent any
     
     parameters {
-        activeChoice(
+        // Use Extended Choice (checkbox multi-select). Requires "Extended Choice Parameter" plugin.
+        // If you don't have the plugin, uncomment the string fallback below.
+        extendedChoice(
             name: 'MY_CHOICE',
-            description: 'Select one or more options',
-            choiceType: 'PT_CHECKBOX',  // PT_CHECKBOX = checkboxes (multi-select), PT_SINGLE_SELECT = dropdown single
-            groovyScript: '''
-                return [
-                    "option1",
-                    "option2",
-                    "option3",
-                    "option4"
-                ]
-            ''',
-            fallbackScript: '''
-                return ["Error loading options"]
-            '''
+            type: 'PT_CHECKBOX',
+            value: 'option1,option2,option3,option4',
+            multiSelectDelimiter: ',',
+            description: 'Select one or more options'
         )
+
+        // Fallback if plugin not available:
+        // string(name: 'MY_CHOICE', defaultValue: 'option1,option2', description: 'Comma-separated list of choices')
     }
     
     stages {
