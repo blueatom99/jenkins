@@ -28,7 +28,7 @@ pipeline {
         //     description: 'Select branch to build (radio)'
         // )
         // Fallback (dropdown) if plugin not installed:
-        choice(name: 'BRANCH', choices: ['development', 'main'], description: 'Branch to build')
+        choice(name: 'Branch', choices: ['development', 'main'], description: 'Branch to build')
     }
     
     stages {
@@ -64,7 +64,7 @@ pipeline {
                 script {
                     try {
                         // def encodedBranch = java.net.URLEncoder.encode(env.BRANCH_NAME, "UTF-8")
-                        def encodedBranch = java.net.URLEncoder.encode(params.BRANCH, "UTF-8")
+                        def encodedBranch = java.net.URLEncoder.encode(params.Branch, "UTF-8")
                         build job: "GitHub jenkins/jenkins1/${encodedBranch}"
                         env.SUCCESSFUL_STAGES += ',Build jenkins1'
                     } catch (Exception e) {
@@ -80,7 +80,7 @@ pipeline {
                 script {
                     try {
                         //def encodedBranch = java.net.URLEncoder.encode(env.BRANCH_NAME, "UTF-8")
-                        def encodedBranch = java.net.URLEncoder.encode(params.BRANCH, "UTF-8")
+                        def encodedBranch = java.net.URLEncoder.encode(params.Branch, "UTF-8")
                         build job: "GitHub jenkins/jenkins2/${encodedBranch}"
                         env.SUCCESSFUL_STAGES += ',Build jenkins2'
                     } catch (Exception e) {
