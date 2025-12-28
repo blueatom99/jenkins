@@ -61,6 +61,13 @@ pipeline {
         }
 
         stage('Build jenkins1') {
+            when {
+                expression {
+                    // params.Builds comes from the Active Choices parameter (comma-separated)
+                    def raw = params.Builds ?: ''
+                    return raw.tokenize(',').collect { it.trim() }.contains('jenkins1')
+                }
+            }
             steps {
                 script {
                     try {
@@ -77,6 +84,12 @@ pipeline {
         }
 
         stage('Build jenkins2') {
+            when {
+                expression {
+                    def raw = params.Builds ?: ''
+                    return raw.tokenize(',').collect { it.trim() }.contains('jenkins2')
+                }
+            }
             steps {
                 script {
                     try {
