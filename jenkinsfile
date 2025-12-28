@@ -4,10 +4,11 @@ properties([
         [$class: 'CascadeChoiceParameter',
             choiceType: 'PT_CHECKBOX',
             description: 'Select one or more options',
-            name: 'builds',
+            name: 'Builds',
             // Default selected options (comma-separated). Adjust as needed.
             value: 'jenkins1,jenkins2',
-            randomName: 'choice-1',
+            // 'randomName' is used as an internal identifier for the parameter; renamed for clarity
+            randomName: 'buildsParameterChoice',
             referencedParameters: '',
             script: [$class: 'GroovyScript', script: [sandbox: true, script: """
                 return ['jenkins1','jenkins2']
