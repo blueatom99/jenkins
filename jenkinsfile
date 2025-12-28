@@ -27,7 +27,7 @@ pipeline {
         //     value: 'development,main',
         //     description: 'Select branch to build (radio)'
         // )
-        Fallback (dropdown) if plugin not installed:
+        // Fallback (dropdown) if plugin not installed:
         choice(name: 'BRANCH', choices: ['development', 'main'], description: 'Branch to build')
     }
     
