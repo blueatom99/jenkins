@@ -1,3 +1,18 @@
+properties([
+    parameters([
+        [$class: 'ChoiceParameter',
+         choiceType: 'PT_SINGLE_SELECT',
+         description: 'Select an option',
+         name: 'MY_CHOICE',
+         script: [
+             $class: 'GroovyScript',
+             sandbox: true,
+             script: 'return ["option1", "option2", "option3"]'
+         ]
+        ]
+    ])
+])
+
 pipeline {
     agent any
 
@@ -12,18 +27,6 @@ pipeline {
     // }
 
 
-    parameters([
-        [$class: 'ChoiceParameter',
-         choiceType: 'PT_SINGLE_SELECT',
-         description: 'Select an option',
-         name: 'MY_CHOICE',
-         script: [
-             $class: 'GroovyScript',
-             sandbox: true,
-             script: 'return ["option1", "option2", "option3"]'
-         ]
-        ]
-    ])
 
 
     stages {
