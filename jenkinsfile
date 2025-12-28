@@ -4,13 +4,13 @@ properties([
         [$class: 'CascadeChoiceParameter',
             choiceType: 'PT_CHECKBOX',
             description: 'Select one or more options',
-            name: 'MY_CHOICE',
+            name: 'builds',
             // Default selected options (comma-separated). Adjust as needed.
-            value: 'option1,option3',
+            value: 'jenkins1,jenkins2',
             randomName: 'choice-1',
             referencedParameters: '',
             script: [$class: 'GroovyScript', script: [sandbox: true, script: """
-                return ['option1','option2','option3','option4']
+                return ['jenkins1','jenkins2']
             """], fallbackScript: [sandbox: true, script: "return ['Error loading options']"]]
         ]
     ])
@@ -18,6 +18,19 @@ properties([
 
 pipeline {
     agent any
+    
+    parameters {
+        // Radio-button branch selection (requires Extended Choice Parameter plugin)
+        extendedChoice(
+            name: 'BRANCH',
+            type: 'PT_RADIO',
+            value: 'development,main',
+            description: 'Select branch to build (radio)'
+        )
+
+        // Fallback (dropdown) if plugin not installed:
+        // choice(name: 'BRANCH', choices: ['development', 'main'], description: 'Branch to build')
+    }
     
     stages {
         stage('Show Selected Options') {
@@ -38,7 +51,6 @@ pipeline {
                 }
             }
         }
-
 
         stage('Initialize') {
             steps {
