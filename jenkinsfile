@@ -5,6 +5,8 @@ properties([
             choiceType: 'PT_CHECKBOX',
             description: 'Select one or more options',
             name: 'MY_CHOICE',
+            // Default selected options (comma-separated). Adjust as needed.
+            value: 'option1,option3',
             randomName: 'choice-1',
             referencedParameters: '',
             script: [$class: 'GroovyScript', script: [sandbox: true, script: """
@@ -37,7 +39,85 @@ pipeline {
             }
         }
     }
+
+
+        stage('Initialize') {
+            steps {
+                script {
+                    env.SUCCESSFUL_STAGES = ''
+                }
+            }
+        }
+
+        stage('Build jenkins1') {
+            steps {
+                script {
+                    try {
+                        // def encodedBranch = java.net.URLEncoder.encode(env.BRANCH_NAME, "UTF-8")
+                        def encodedBranch = java.net.URLEncoder.encode(params.BRANCH, "UTF-8")
+                        build job: "GitHub jenkins/jenkins1/${encodedBranch}"
+                        env.SUCCESSFUL_STAGES += ',Build jenkins1'
+                    } catch (Exception e) {
+                        echo "Build of jenkins1 failed: ${e.getMessage()}"
+                        currentBuild.result = 'UNSTABLE'
+                    }       
+                }
+            }
+        }
+
+        stage('Build jenkins2') {
+            steps {
+                script {
+                    try {
+                        //def encodedBranch = java.net.URLEncoder.encode(env.BRANCH_NAME, "UTF-8")
+                        def encodedBranch = java.net.URLEncoder.encode(params.BRANCH, "UTF-8")
+                        build job: "GitHub jenkins/jenkins2/${encodedBranch}"
+                        env.SUCCESSFUL_STAGES += ',Build jenkins2'
+                    } catch (Exception e) {
+                        echo "Build of jenkins2 failed: ${e.message}"
+                        currentBuild.result = 'UNSTABLE'
+                    }
+                }
+            }
+        }
+
+        stage('Summary') {
+            steps {
+                script {
+                    def successfulStages = env.SUCCESSFUL_STAGES.split(',').findAll { it.trim() != '' }
+                    echo "==================== BUILD SUMMARY ===================="
+                    echo "Total successful stages: ${successfulStages.size()}"
+                    successfulStages.each { stage ->
+                        echo "✓ ${stage.trim()}"
+                    }
+                    echo "======================================================"
+                    
+                    // Check if all stages succeeded
+                    env.ALL_SUCCESSFUL = (currentBuild.result == null || currentBuild.result == 'SUCCESS')
+                }
+            }
+        }
+
+        stage('All Stages Succeeded') {
+            when {
+                expression {
+                    return env.ALL_SUCCESSFUL == 'true'
+                }
+            }
+            steps {
+                script {
+                    echo "✓ All stages completed successfully!"
+                    // Add your action here (e.g., send notification, deploy, etc.)
+                    // Example:
+                    // sh 'echo "Triggering deployment..."'
+                    // build job: 'deploy-job'
+                }
+            }
+        }
+    }
 }
+
+
 
 
 
