@@ -1,15 +1,29 @@
 pipeline {
     agent any
 
-    parameters {
-    //choice(name: 'BRANCH', choices: ['development', 'main'], description: 'Branch to build')
-    // Allow multiple selections for TARGETS
-        choice(
-            name: 'MY_CHOICE',
-            choices: ['option1', 'option2', 'option3'],
-            description: 'Select an option'
-        )
-    }
+    // parameters {
+    // //choice(name: 'BRANCH', choices: ['development', 'main'], description: 'Branch to build')
+    // // Allow multiple selections for TARGETS
+    //     choice(
+    //         name: 'MY_CHOICE',
+    //         choices: ['option1', 'option2', 'option3'],
+    //         description: 'Select an option'
+    //     )
+    // }
+
+
+    parameters([
+        [$class: 'ChoiceParameter',
+         choiceType: 'PT_SINGLE_SELECT',
+         description: 'Select an option',
+         name: 'MY_CHOICE',
+         script: [
+             $class: 'GroovyScript',
+             sandbox: true,
+             script: 'return ["option1", "option2", "option3"]'
+         ]
+        ]
+    ])
 
 
     stages {
