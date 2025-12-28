@@ -8,6 +8,9 @@ pipeline {
             name: 'TARGETS',
             type: 'PT_CHECKBOX',                // checkbox multi-select
             value: 'jenkins1,jen'
+            multiSelectDelimiter: ',',          // delimiter used in params.TARGETS
+            description: 'Select one or more targets'
+        )
     }
 
 
